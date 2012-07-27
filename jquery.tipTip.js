@@ -3,6 +3,9 @@
 * Copyright 2010 Drew Wilson
 * www.drewwilson.com
 * code.drewwilson.com/entry/tiptip-jquery-plugin
+* 
+* Modified by: indyone (https://github.com/indyone/TipTip)
+* Modified by: Jonathan Lim-Breitbart (https://github.com/breity/TipTip) - Updated: Jul. 27, 2012
 *
 * Version 1.3   -   Updated: Mar. 23, 2010
 *
@@ -88,6 +91,14 @@
                             tiptip_holder.one('mouseleave.tipTip', function () {
                                 deactive_tiptip();
                             });
+                            
+                            // hide tooltip when user clicks anywhere else but on the tooltip element
+                			$('html').off('click.tipTip').on('click.tipTip',function(e){
+                				if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
+                					$('html').off('click.tipTip');
+                					deactive_tiptip();
+                				}
+                			});
                         }
                     });
                 } else if (opts.activation == 'focus') {
@@ -108,6 +119,14 @@
                             tiptip_holder.one('mouseleave.tipTip', function () {
                                 deactive_tiptip();
                             });
+                            
+                            // hide tooltip when user clicks anywhere else but on the tooltip element
+                			$('html').off('click.tipTip').on('click.tipTip',function(e){
+                				if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
+                					$('html').off('click.tipTip');
+                					deactive_tiptip();
+                				}
+                			});
                         }
                     });
                 } else if (opts.activation == 'manual') {
@@ -206,7 +225,7 @@
 
                 function moveBottom() {
                     tip_class = tip_classes.bottom;
-                    tip_top = org_top + org_height + opts.edgeOffset + (arrow_height / 2);
+                    tip_top = org_top + org_height + opts.edgeOffset;
                     tip_left = org_left + ((org_width - tip_width) / 2);
                 }
 
@@ -219,7 +238,7 @@
                 function moveRight() {
                     tip_class = tip_classes.right;
                     tip_top = org_top + ((org_height - tip_height) / 2);
-                    tip_left = org_left + org_width + opts.edgeOffset + (arrow_width / 2);
+                    tip_left = org_left + org_width + opts.edgeOffset;
                 }
 
                 // Calculate the position of the tooltip.
@@ -286,14 +305,14 @@
                     arrow_top = tip_height; // Position the arrow vertically on the top of the tooltip.
                     arrow_left = org_left - tip_left + ((org_width - arrow_width) / 2); // Center the arrow horizontally on the center of the target element.
                 } else if (tip_class == tip_classes.bottom) {
-                    arrow_top = -arrow_height; // Position the arrow vertically on the bottom of the tooltip.
+                    arrow_top = 0; // Position the arrow vertically on the bottom of the tooltip.
                     arrow_left = org_left - tip_left + ((org_width - arrow_width) / 2); // Center the arrow horizontally on the center of the target element.
                 } else if (tip_class == tip_classes.left) {
                     arrow_top = org_top - tip_top + ((org_height - arrow_height) / 2); // Center the arrow vertically on the center of the target element.
                     arrow_left = tip_width; // Position the arrow vertically on the left of the tooltip.
                 } else if (tip_class == tip_classes.right) {
                     arrow_top = org_top - tip_top + ((org_height - arrow_height) / 2); // Center the arrow vertically on the center of the target element.
-                    arrow_left = -arrow_width; // Position the arrow vertically on the right of the tooltip.
+                	arrow_left = 0; // Position the arrow vertically on the right of the tooltip.
                 }
 
                 tiptip_arrow
