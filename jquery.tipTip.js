@@ -92,7 +92,6 @@
                     }).bind('mouseleave.tipTip', function () {
                             if (timeoutHover){
                                 clearTimeout(timeoutHover);
-                                return;
                             }
                             if (!opts.keepAlive) {
                                 deactive_tiptip();
