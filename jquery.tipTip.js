@@ -1,26 +1,26 @@
 /*
-* TipTip
-* Copyright 2010 Drew Wilson
-* www.drewwilson.com
-* code.drewwilson.com/entry/tiptip-jquery-plugin
-* 
-* Modified by: indyone (https://github.com/indyone/TipTip)
-* Modified by: Jonathan Lim-Breitbart (https://github.com/breity/TipTip) - Updated: Jul. 27, 2012
-*
-* Version 1.3   -   Updated: Mar. 23, 2010
-*
-* This Plug-In will create a custom tooltip to replace the default
-* browser tooltip. It is extremely lightweight and very smart in
-* that it detects the edges of the browser window and will make sure
-* the tooltip stays within the current window size. As a result the
-* tooltip will adjust itself to be displayed above, below, to the left 
-* or to the right depending on what is necessary to stay within the
-* browser window. It is completely customizable as well via CSS.
-*
-* This TipTip jQuery plug-in is dual licensed under the MIT and GPL licenses:
-*   http://www.opensource.org/licenses/mit-license.php
-*   http://www.gnu.org/licenses/gpl.html
-*/
+ * TipTip
+ * Copyright 2010 Drew Wilson
+ * www.drewwilson.com
+ * code.drewwilson.com/entry/tiptip-jquery-plugin
+ *
+ * Modified by: indyone (https://github.com/indyone/TipTip)
+ * Modified by: Jonathan Lim-Breitbart (https://github.com/breity/TipTip) - Updated: Jul. 27, 2012
+ *
+ * Version 1.3   -   Updated: Mar. 23, 2010
+ *
+ * This Plug-In will create a custom tooltip to replace the default
+ * browser tooltip. It is extremely lightweight and very smart in
+ * that it detects the edges of the browser window and will make sure
+ * the tooltip stays within the current window size. As a result the
+ * tooltip will adjust itself to be displayed above, below, to the left
+ * or to the right depending on what is necessary to stay within the
+ * browser window. It is completely customizable as well via CSS.
+ *
+ * This TipTip jQuery plug-in is dual licensed under the MIT and GPL licenses:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *   http://www.gnu.org/licenses/gpl.html
+ */
 
 (function ($) {
     $.fn.tipTip = function (options) {
@@ -31,6 +31,7 @@
             edgeOffset: 0, // The offset between the tooltip arrow edge and the element that has the tooltip.
             defaultPosition: 'bottom', // The position of the tooltip. Can be: top, right, bottom and left.
             delay: 400, // The delay in msec to show a tooltip.
+            delayHover: 500, //The delay in msec to prevent quick hover
             fadeIn: 200, // The length in msec of the fade in.
             fadeOut: 200, // The length in msec of the fade out.
             attribute: 'title', // The attribute to fetch the tooltip text if the option content is false.
@@ -78,57 +79,64 @@
                 }
             } else {
                 var timeout = false;
-
+                var timeoutHover = false;
                 org_elem.data('tipTip', { options: opts });
 
                 if (opts.activation == 'hover') {
                     org_elem.bind('mouseenter.tipTip', function () {
-                        active_tiptip();
-                    }).bind('mouseleave.tipTip', function () {
-                        if (!opts.keepAlive) {
-                            deactive_tiptip();
-                        } else {
-                            tiptip_holder.one('mouseleave.tipTip', function () {
-                                deactive_tiptip();
-                            });
-                            
-                            // hide tooltip when user clicks anywhere else but on the tooltip element
-                			$('html').off('click.tipTip').on('click.tipTip',function(e){
-                				if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
-                					$('html').off('click.tipTip');
-                					deactive_tiptip();
-                				}
-                			});
+                        if (opts.delayHover){
+                            timeoutHover = setTimeout( function(){ active_tiptip() }, opts.delayHover);
+                        }else{
+                            active_tiptip();
                         }
-                    });
+                    }).bind('mouseleave.tipTip', function () {
+                            if (timeoutHover){
+                                clearTimeout(timeoutHover);
+                            }
+                            if (!opts.keepAlive) {
+                                deactive_tiptip();
+                            } else {
+                                tiptip_holder.one('mouseleave.tipTip', function () {
+                                    deactive_tiptip();
+                                });
+
+                                // hide tooltip when user clicks anywhere else but on the tooltip element
+                                $('html').off('click.tipTip').on('click.tipTip',function(e){
+                                    if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
+                                        $('html').off('click.tipTip');
+                                        deactive_tiptip();
+                                    }
+                                });
+                            }
+                        });
                 } else if (opts.activation == 'focus') {
                     org_elem.bind('focus.tipTip', function () {
                         active_tiptip();
                     }).bind('blur.tipTip', function () {
-                        deactive_tiptip();
-                    });
+                            deactive_tiptip();
+                        });
                 } else if (opts.activation == 'click') {
                     org_elem.bind('click.tipTip', function (e) {
                         e.preventDefault();
                         active_tiptip();
                         return false;
                     }).bind('mouseleave.tipTip', function () {
-                        if (!opts.keepAlive) {
-                            deactive_tiptip();
-                        } else {
-                            tiptip_holder.one('mouseleave.tipTip', function () {
+                            if (!opts.keepAlive) {
                                 deactive_tiptip();
-                            });
-                            
-                            // hide tooltip when user clicks anywhere else but on the tooltip element
-                			$('html').off('click.tipTip').on('click.tipTip',function(e){
-                				if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
-                					$('html').off('click.tipTip');
-                					deactive_tiptip();
-                				}
-                			});
-                        }
-                    });
+                            } else {
+                                tiptip_holder.one('mouseleave.tipTip', function () {
+                                    deactive_tiptip();
+                                });
+
+                                // hide tooltip when user clicks anywhere else but on the tooltip element
+                                $('html').off('click.tipTip').on('click.tipTip',function(e){
+                                    if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
+                                        $('html').off('click.tipTip');
+                                        deactive_tiptip();
+                                    }
+                                });
+                            }
+                        });
                 } else if (opts.activation == 'manual') {
                     // Nothing to register actually. We decide when to show or hide.
                 }
@@ -312,7 +320,7 @@
                     arrow_left = tip_width; // Position the arrow vertically on the left of the tooltip.
                 } else if (tip_class == tip_classes.right) {
                     arrow_top = org_top - tip_top + ((org_height - arrow_height) / 2); // Center the arrow vertically on the center of the target element.
-                	arrow_left = 0; // Position the arrow vertically on the right of the tooltip.
+                    arrow_left = 0; // Position the arrow vertically on the right of the tooltip.
                 }
 
                 tiptip_arrow
