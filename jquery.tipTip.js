@@ -5,7 +5,7 @@
  * code.drewwilson.com/entry/tiptip-jquery-plugin
  *
  * Modified by: indyone (https://github.com/indyone/TipTip)
- * Modified by: Jonathan Lim-Breitbart (https://github.com/breity/TipTip) - Updated: Jul. 27, 2012
+ * Modified by: Jonathan Lim-Breitbart (https://github.com/breity/TipTip) - Updated: Oct. 10, 2012
  *
  * Version 1.3   -   Updated: Mar. 23, 2010
  *
@@ -193,7 +193,10 @@
                     clearTimeout(timeout);
                 }
 
-                tiptip_holder.fadeOut(opts.fadeOut);
+                tiptip_holder.fadeOut(opts.fadeOut, function(){
+                	// reset tip position and dimensions
+                	$(this).css({ left: '', top: '', height: '', width: '' });
+                });
 
                 $(window).unbind('resize.tipTip scroll.tipTip');
 
@@ -284,18 +287,18 @@
                 // Fix the vertical position if the tooltip is off the top or bottom sides of the window's viewport.
                 if (tip_class == tip_classes.left || tip_class == tip_classes.right) { // If positioned left or right check if the tooltip is off the top or bottom window's viewport.
                     if (tip_top + tip_height > win_height + win_top) { // If the bottom edge of the tooltip is off the bottom side of the window's viewport. 
-                        tip_top = org_top + org_height > win_height + win_top ? org_top + org_height - tip_height : win_height + win_top - tip_height; // Make 'bottom edge of the tooltip' == 'bottom side of the window's viewport'.
+                        tip_top = org_top + org_height > win_height + win_top ? org_top + org_height - tip_height : win_height + win_top - tip_height - 4; // Make 'bottom edge of the tooltip' == 'bottom side of the window's viewport'.
                     } else if (tip_top < win_top) { // If the top edge of the tooltip if off the top side of the window's viewport.
-                        tip_top = org_top < win_top ? org_top : win_top; // Make 'top edge of the tooltip' == 'top side of the window's viewport'.
+                        tip_top = org_top < win_top ? org_top : win_top + 4; // Make 'top edge of the tooltip' == 'top side of the window's viewport'.
                     }
                 }
 
                 // Fix the horizontal position if the tooltip is off the right or left sides of the window's viewport.
                 if (tip_class == tip_classes.top || tip_class == tip_classes.bottom) {
                     if (tip_left + tip_width > win_width + win_left) { // If the right edge of the tooltip is off the right side of the window's viewport. 
-                        tip_left = org_left + org_width > win_width + win_left ? org_left + org_width - tip_width : win_width + win_left - tip_width; // Make 'right edge of the tooltip' == 'right side of the window's viewport'.
+                        tip_left = org_left + org_width > win_width + win_left ? org_left + org_width - tip_width : win_width + win_left - tip_width - 4; // Make 'right edge of the tooltip' == 'right side of the window's viewport'.
                     } else if (tip_left < win_left) { // If the left edge of the tooltip if off the left side of the window's viewport.
-                        tip_left = org_left < win_left ? org_left : win_left; // Make 'left edge of the tooltip' == 'left side of the window's viewport'.
+                        tip_left = org_left < win_left ? org_left : win_left + 4; // Make 'left edge of the tooltip' == 'left side of the window's viewport'.
                     }
                 }
 
