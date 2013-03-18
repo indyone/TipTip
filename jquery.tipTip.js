@@ -26,7 +26,7 @@
     $.fn.tipTip = function (options) {
         var defaults = {
             activation: 'hover', // How to show (and hide) the tooltip. Can be: hover, focus, click and manual.
-            keepAlive: false, // When true the tooltip won't disapper when the mouse moves away from the element. Instead it will be hidden when it leaves the tooltip.
+            keepAlive: false, // When true the tooltip won't disappear when the mouse moves away from the element. Instead it will be hidden when it leaves the tooltip.
             maxWidth: '200px', // The max-width to set on the tooltip. You may also use the option cssClass to set this.
             edgeOffset: 0, // The offset between the tooltip arrow edge and the element that has the tooltip.
             defaultPosition: 'bottom', // The position of the tooltip. Can be: top, right, bottom and left.
@@ -35,7 +35,7 @@
             fadeIn: 200, // The length in msec of the fade in.
             fadeOut: 200, // The length in msec of the fade out.
             attribute: 'title', // The attribute to fetch the tooltip text if the option content is false.
-            content: false, // HTML or String or Function (that returns HTML or String) to fill TipTIp with
+            content: false, // HTML or String or Function (that returns HTML or String) to fill TipTip with
             enter: function () { }, // Callback function before a tooltip is shown.
             afterEnter: function () { }, // Callback function after a tooltip is shown.
             exit: function () { }, // Callback function before a tooltip is hidden.
