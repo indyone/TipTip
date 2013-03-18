@@ -32,6 +32,7 @@
             defaultPosition: 'bottom', // The position of the tooltip. Can be: top, right, bottom and left.
             delay: 400, // The delay in msec to show a tooltip.
             delayHover: 500, //The delay in msec to prevent quick hover
+            hideOnClick: false, // When true, clicking outside of the tooltip will hide it immediately. Works well with keepAlive
             fadeIn: 200, // The length in msec of the fade in.
             fadeOut: 200, // The length in msec of the fade out.
             attribute: 'title', // The attribute to fetch the tooltip text if the option content is false.
@@ -93,20 +94,16 @@
                             if (timeoutHover){
                                 clearTimeout(timeoutHover);
                             }
+                            
                             if (!opts.keepAlive) {
                                 deactive_tiptip();
                             } else {
                                 tiptip_holder.one('mouseleave.tipTip', function () {
                                     deactive_tiptip();
                                 });
-
-                                // hide tooltip when user clicks anywhere else but on the tooltip element
-                                $('html').off('click.tipTip').on('click.tipTip',function(e){
-                                    if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
-                                        $('html').off('click.tipTip');
-                                        deactive_tiptip();
-                                    }
-                                });
+                            }
+                            if (opts.hideOnClick) {
+                                deactive_on_click();
                             }
                         });
                 } else if (opts.activation == 'focus') {
@@ -127,18 +124,21 @@
                                 tiptip_holder.one('mouseleave.tipTip', function () {
                                     deactive_tiptip();
                                 });
-
-                                // hide tooltip when user clicks anywhere else but on the tooltip element
-                                $('html').off('click.tipTip').on('click.tipTip',function(e){
-                                    if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
-                                        $('html').off('click.tipTip');
-                                        deactive_tiptip();
-                                    }
-                                });
                             }
+                            deactive_on_click();
                         });
                 } else if (opts.activation == 'manual') {
                     // Nothing to register actually. We decide when to show or hide.
+                }
+                
+                // hide tooltip when user clicks anywhere else but on the tooltip element
+                function deactive_on_click() {
+                    $('html').off('click.tipTip').on('click.tipTip',function(e){
+                        if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
+                            $('html').off('click.tipTip');
+                            deactive_tiptip();
+                        }
+                    });
                 }
             }
 
