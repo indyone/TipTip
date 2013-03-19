@@ -26,16 +26,18 @@
     $.fn.tipTip = function (options) {
         var defaults = {
             activation: 'hover', // How to show (and hide) the tooltip. Can be: hover, focus, click and manual.
-            keepAlive: false, // When true the tooltip won't disapper when the mouse moves away from the element. Instead it will be hidden when it leaves the tooltip.
+            keepAlive: false, // When true the tooltip won't disappear when the mouse moves away from the element. Instead it will be hidden when it leaves the tooltip.
             maxWidth: '200px', // The max-width to set on the tooltip. You may also use the option cssClass to set this.
             edgeOffset: 0, // The offset between the tooltip arrow edge and the element that has the tooltip.
             defaultPosition: 'bottom', // The position of the tooltip. Can be: top, right, bottom and left.
             delay: 400, // The delay in msec to show a tooltip.
             delayHover: 500, //The delay in msec to prevent quick hover
+            delayHide: 0, // The delay in msec to hide a tooltip.
+            hideOnClick: false, // When true, clicking outside of the tooltip will hide it immediately. Works well with keepAlive and delayHide
             fadeIn: 200, // The length in msec of the fade in.
             fadeOut: 200, // The length in msec of the fade out.
             attribute: 'title', // The attribute to fetch the tooltip text if the option content is false.
-            content: false, // HTML or String or Function (that returns HTML or String) to fill TipTIp with
+            content: false, // HTML or String or Function (that returns HTML or String) to fill TipTip with
             enter: function () { }, // Callback function before a tooltip is shown.
             afterEnter: function () { }, // Callback function after a tooltip is shown.
             exit: function () { }, // Callback function before a tooltip is hidden.
@@ -57,11 +59,20 @@
                 tiptip_arrow = $('#tiptip_arrow');
         }
 
+        // shared timeout to track delayed hide, because we only have one #tiptip_holder
+        var timeoutHide = false;
+
         return this.each(function () {
             var org_elem = $(this),
                 data = org_elem.data('tipTip'),
                 opts = data && data.options || $.extend({}, defaults, options),
                 callback_data = { holder: tiptip_holder, content: tiptip_content, arrow: tiptip_arrow, options: opts };
+
+            // caching and removing the opts.attribute, to prevent browser from showing native tooltip
+            if (!opts.content && !$.isFunction(opts.content)) {
+                opts.content = org_elem.attr(opts.attribute);
+                org_elem.removeAttr(opts.attribute); //remove original attribute
+            }
 
             if (data) {
                 switch (options) {
@@ -93,20 +104,16 @@
                             if (timeoutHover){
                                 clearTimeout(timeoutHover);
                             }
+                            
                             if (!opts.keepAlive) {
                                 deactive_tiptip();
                             } else {
                                 tiptip_holder.one('mouseleave.tipTip', function () {
                                     deactive_tiptip();
                                 });
-
-                                // hide tooltip when user clicks anywhere else but on the tooltip element
-                                $('html').off('click.tipTip').on('click.tipTip',function(e){
-                                    if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
-                                        $('html').off('click.tipTip');
-                                        deactive_tiptip();
-                                    }
-                                });
+                            }
+                            if (opts.hideOnClick) {
+                                deactive_on_click();
                             }
                         });
                 } else if (opts.activation == 'focus') {
@@ -127,18 +134,21 @@
                                 tiptip_holder.one('mouseleave.tipTip', function () {
                                     deactive_tiptip();
                                 });
-
-                                // hide tooltip when user clicks anywhere else but on the tooltip element
-                                $('html').off('click.tipTip').on('click.tipTip',function(e){
-                                    if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
-                                        $('html').off('click.tipTip');
-                                        deactive_tiptip();
-                                    }
-                                });
                             }
+                            deactive_on_click();
                         });
                 } else if (opts.activation == 'manual') {
                     // Nothing to register actually. We decide when to show or hide.
+                }
+                
+                // hide tooltip when user clicks anywhere else but on the tooltip element
+                function deactive_on_click() {
+                    $('html').off('click.tipTip').on('click.tipTip',function(e){
+                        if (tiptip_holder.css('display') == 'block' && !$(e.target).closest('#tiptip_holder').length) {
+                            $('html').off('click.tipTip');
+                            deactive_tiptip(0); // 0 = immediately, overriding delayHide
+                        }
+                    });
                 }
             }
 
@@ -173,6 +183,11 @@
                     clearTimeout(timeout);
                 }
 
+                // Kill delayed timeout
+                if (timeoutHide) {
+                    clearTimeout(timeoutHide);
+                }
+
                 timeout = setTimeout(function () {
                     tiptip_holder.stop(true, true).fadeIn(opts.fadeIn);
                 }, opts.delay);
@@ -184,7 +199,7 @@
                 opts.afterEnter.call(org_elem, callback_data);
             }
 
-            function deactive_tiptip() {
+            function deactive_tiptip(delay) {
                 if (opts.exit.call(org_elem, callback_data) === false) {
                     return;
                 }
@@ -193,16 +208,47 @@
                     clearTimeout(timeout);
                 }
 
-                tiptip_holder.fadeOut(opts.fadeOut, function(){
-                	// reset tip position and dimensions
-                	$(this).css({ left: '', top: '', height: '', width: '' });
-                });
+                function hide_tiptip() {
+                    tiptip_holder.fadeOut(opts.fadeOut, function(){
+                        // reset tip position and dimensions
+                        $(this).css({ left: '', top: '', height: '', width: '' });
+                    });
+                }
 
-                $(window).unbind('resize.tipTip scroll.tipTip');
+                // Visually hide the tooltip after an optional delay
+                var delay = (delay !== undefined) ? delay : opts.delayHide;
 
-                org_elem.removeClass('tiptip_visible');
+                if (delay == 0) {
+                    hide_tiptip();
+                    // if user clicked, let's also cancel any delayed hide
+                    if (opts.delayHide > 0) {
+                        clearTimeout(timeoutHide);
+                    }
+                } else {
+                    
+                    // don't hide tooltip when we hover it
+                    tiptip_holder.one('mouseenter.tipTip', function() {
+                        clearTimeout(timeoutHide);
+                        tiptip_holder.on('mouseleave.tipTip', function() {
+                            deactive_tiptip();
+                        });
+                    });
+                    
+                    timeoutHide = setTimeout(function() {
+                        hide_tiptip();
+                    }, delay);
 
-                opts.afterExit.call(org_elem, callback_data);
+                }
+
+                // These should happen whether the tooltip is visually hidden or just moved by active_tiptip()
+                setTimeout(function() {
+                    $(window).unbind('resize.tipTip scroll.tipTip');
+
+                    org_elem.removeClass('tiptip_visible');
+
+                    opts.afterExit.call(org_elem, callback_data);
+                }, delay);
+
             }
 
             function position_tiptip() {

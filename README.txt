@@ -4,6 +4,7 @@ Copyright 2010 Drew Wilson
 
 Modified by: indyone (https://github.com/indyone/TipTip)
 Modified by: Jonathan Lim-Breitbart (https://github.com/breity/TipTip) - Updated: Oct. 10, 2012
+Modified by: Alan Hussey/EnergySavvy (https://github.com/EnergySavvy/TipTip) - Updated: Mar. 18, 2012
 
 http://www.drewwilson.com
 http://code.drewwilson.com/entry/tiptip-jquery-plugin
@@ -77,3 +78,13 @@ have been modified to resolve this.  CSS was inspired by Toorshia's CSS in TipTi
 * When keepAlive option is set to true, tooltip now hides both when the mouse leaves the tiptip_holder (like before) 
 as well as when mouse is clicked anywhere other than the tooltip itself. (Appropriated from James Simpson's miniTip plugin:
 http://goldfirestudios.com/blog/81/miniTip-jQuery-Plugin).
+
+-------------------------------------------------------------------
+
+More updates (Mar. 18, 2013):
+
+* Added two new options, hideOnClick and delayHide:
+
+* hideOnClick takes a feature previously added to keepAlive, and makes it optional. 
+
+* delayHide adds an optional delay before the tooltip will be hidden. This option pairs well with hideOnClick. 
