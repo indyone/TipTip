@@ -6,6 +6,7 @@
  *
  * Modified by: indyone (https://github.com/indyone/TipTip)
  * Modified by: Jonathan Lim-Breitbart (https://github.com/breity/TipTip) - Updated: Oct. 10, 2012
+ * Modified by: Alan Hussey/EnergySavvy (https://github.com/EnergySavvy/TipTip) - Updated: Mar. 18, 2013
  *
  * Version 1.3   -   Updated: Mar. 23, 2010
  *

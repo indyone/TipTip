@@ -4,7 +4,7 @@ Copyright 2010 Drew Wilson
 
 Modified by: indyone (https://github.com/indyone/TipTip)
 Modified by: Jonathan Lim-Breitbart (https://github.com/breity/TipTip) - Updated: Oct. 10, 2012
-Modified by: Alan Hussey/EnergySavvy (https://github.com/EnergySavvy/TipTip) - Updated: Mar. 18, 2012
+Modified by: Alan Hussey/EnergySavvy (https://github.com/EnergySavvy/TipTip) - Updated: Mar. 18, 2013
 
 http://www.drewwilson.com
 http://code.drewwilson.com/entry/tiptip-jquery-plugin
