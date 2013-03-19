@@ -2,6 +2,10 @@ TipTip
 
 Copyright 2010 Drew Wilson
 
+Modified by: indyone (https://github.com/indyone/TipTip)
+Modified by: Jonathan Lim-Breitbart (https://github.com/breity/TipTip) - Updated: Oct. 10, 2012
+Modified by: Alan Hussey/EnergySavvy (https://github.com/EnergySavvy/TipTip) - Updated: Mar. 18, 2013
+
 http://www.drewwilson.com
 http://code.drewwilson.com/entry/tiptip-jquery-plugin
 
@@ -61,3 +65,26 @@ What's New:
 * The option "activation" can have the value "manual". In this case no events will be applied to the element and the developer will be responsible to show or not the tooltip. But you can always use the show and hide methods to show or hide the tooltip ;-)
 
 * Created an alternate look & feel for TipTip, you can use it by setting the option "cssClass" to "alternative".
+
+-------------------------------------------------------------------
+
+More updates (Jul. 27, 2012):
+
+* Fixed tooltip flickering that occurred when hovering over the edge of a tooltip's trigger element.
+This was being caused by the tiptip_arrow overlapping the trigger element. CSS and arrow positioning 
+have been modified to resolve this.  CSS was inspired by Toorshia's CSS in TipTip discussion thread 
+(see https://drew.tenderapp.com/discussions/tiptip/32-tool-tip-flickers-when-hovering-the-border-of-a-tiptip-link).
+
+* When keepAlive option is set to true, tooltip now hides both when the mouse leaves the tiptip_holder (like before) 
+as well as when mouse is clicked anywhere other than the tooltip itself. (Appropriated from James Simpson's miniTip plugin:
+http://goldfirestudios.com/blog/81/miniTip-jQuery-Plugin).
+
+-------------------------------------------------------------------
+
+More updates (Mar. 18, 2013):
+
+* Added two new options, hideOnClick and delayHide:
+
+* hideOnClick takes a feature previously added to keepAlive, and makes it optional. 
+
+* delayHide adds an optional delay before the tooltip will be hidden. This option pairs well with hideOnClick. 
