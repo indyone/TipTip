@@ -68,6 +68,12 @@
                 opts = data && data.options || $.extend({}, defaults, options),
                 callback_data = { holder: tiptip_holder, content: tiptip_content, arrow: tiptip_arrow, options: opts };
 
+            // caching and removing the opts.attribute, to prevent browser from showing native tooltip
+            if (!opts.content && !$.isFunction(opts.content)) {
+                opts.content = org_elem.attr(opts.attribute);
+                org_elem.removeAttr(opts.attribute); //remove original attribute
+            }
+
             if (data) {
                 switch (options) {
                     case 'show':
